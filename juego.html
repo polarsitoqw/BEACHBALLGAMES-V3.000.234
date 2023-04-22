@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Beach Ball Game</title>
+  <style>
+ #container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            background-image: url(background.jpg); /* Reemplaza 'fondo.jpg' con la ruta de tu imagen de fondo */
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Estilos para la pelota */
+        #ball {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-image: url(ball.png); /* Reemplaza 'ball.png' con la ruta de tu imagen de la pelota */
+            background-size: cover;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        /* Estilos para el contador de rebotes */
+        #bounceCounter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: #fff;
+            background-color: #333;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 2;
+        }
+
+        /* Estilos para el temporizador */
+        #timer {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: #fff;
+            background-color: #333;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 2;
+        }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div id="ball"></div>
+    <div id="body"></div>
+    <div id="timer">Tiempo transcurrido: 0 segundos</div>
+    <div id="bounceCounter">Rebotes en las esquinas: 0</div>
+    
+    <script>
+    var ball = document.getElementById('ball');
+var container = document.getElementById('container');
+var bounceCounter = document.getElementById('bounceCounter');
+
+var ballSize = 50;
+var containerWidth = window.innerWidth;
+var containerHeight = window.innerHeight;
+var ballSpeed = 2;
+var bounceCount = 0;
+
+var ballX = Math.floor(Math.random() * (containerWidth - ballSize)); // Posición inicial X de la pelota
+var ballY = Math.floor(Math.random() * (containerHeight - ballSize)); // Posición inicial Y de la pelota
+var ballXSpeed = ballSpeed;
+var ballYSpeed = ballSpeed;
+
+var startTime = new Date().getTime(); // Tiempo de inicio del contador
+
+function drawBall() {
+    ball.style.top = ballY + 'px';
+    ball.style.left = ballX + 'px';
+}
+
+function updateBallPosition() {
+    // Rebotar en los bordes de la ventana
+    if (ballX <= 0 || ballX + ballSize >= containerWidth) {
+        ballXSpeed *= -1;
+        playBounceSound();
+        incrementBounceCounter();
+    }
+    if (ballY <= 0 || ballY + ballSize >= containerHeight) {
+        ballYSpeed *= -1;
+        playBounceSound();
+        incrementBounceCounter();
+    }
+
+    // Mover la pelota
+    ballX += ballXSpeed;
+    ballY += ballYSpeed;
+}
+
+function animateBall() {
+    drawBall();
+    updateBallPosition();
+    requestAnimationFrame(animateBall);
+}
+
+function playBounceSound() {
+    var bounceSound = new Audio('bounce.mp3'); // Reemplaza 'bounce.mp3' con la ruta de tu archivo de sonido
+    bounceSound.play();
+}
+
+function incrementBounceCounter() {
+    bounceCount++;
+    bounceCounter.textContent = 'Bounces: ' + bounceCount;
+}
+
+function updateTimer() {
+    var currentTime = new Date().getTime();
+    var elapsedTime = currentTime - startTime;
+    var seconds = Math.floor(elapsedTime / 1000);
+    var minutes = Math.floor(seconds / 60);
+    seconds = seconds % 60;
+    document.getElementById('timer').textContent = 'Time: ' + minutes + 'm ' + seconds + 's';
+    setTimeout(updateTimer, 1000);
+}
+
+animateBall();
+updateTimer();
+</script>
+  
+</body>
+
+</html>
